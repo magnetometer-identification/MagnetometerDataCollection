@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MagnetometerDataCollection</string>
+    <string name="start_collecting">START COLLECTING</string>
 </resources>
