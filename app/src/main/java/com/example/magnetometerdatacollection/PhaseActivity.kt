@@ -32,20 +32,20 @@ class PhaseActivity : AppCompatActivity() {
             val AirPlainMode = Settings.System.getInt(contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) == 1
 
             println("test button AirPlainMode == " + AirPlainMode)
-//            if (ActivityCompat.checkSelfPermission(
-//                    this,
-//                    Manifest.permission.READ_PHONE_STATE
-//                ) != PackageManager.PERMISSION_GRANTED
-//            ) {
-//                // TODO: Consider calling
-//                //    ActivityCompat#requestPermissions
-//                // here to request the missing permissions, and then overriding
-//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                //                                          int[] grantResults)
-//                // to handle the case where the user grants the permission. See the documentation
-//                // for ActivityCompat#requestPermissions for more details.
-//                return@setOnClickListener
-//            }
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_PHONE_STATE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return@setOnClickListener
+            }
             if (wifi.isWifiEnabled and myBluetoothAdapter.isEnabled and tm.isDataEnabled) {
                 //TODO: Code to execute if wifi is enabled.
                 println("test button")
