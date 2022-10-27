@@ -2,6 +2,7 @@ package com.example.magnetometerdatacollection
 
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var deviceID: String
     lateinit var UserID: String
 
+
     var SET_of_STAGES = setOf<Int> (1,2,3,4,5,6)
 
     var done: Boolean = false
@@ -43,7 +45,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val sharedPref: SharedPreferences = getSharedPreferences("SharedVal", MODE_PRIVATE)
+        SET_of_STAGES = SET_of_STAGES.minusElement(sharedPref.getInt("STAGE", -1))
         changeStage(SET_of_STAGES.random())
+        println(SET_of_STAGES + "aaaaaaaaaaaaaaaaaaa")
 
         startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
 
@@ -72,18 +77,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun changeStage(stage_num: Int){
+        val sharedPref: SharedPreferences = getSharedPreferences("SharedVal", MODE_PRIVATE)
 
-        val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
         val prefEditor = sharedPref.edit()
 
         try {
-            if (!sharedPref.contains("STAGE")){
+//            if (!sharedPref.contains("STAGE")){
                 //Stage cariable set to stage_num
                 prefEditor.putInt("STAGE", stage_num)
                 prefEditor.commit()
 
                 println("add config file success "+ sharedPref.getInt("STAGE",-1))
-            }
+//            }
+//            else{
+//                prefEditor.
+//            }
         }
         catch (e: Exception){
             println("add config file fail")
@@ -117,14 +125,19 @@ class MainActivity : AppCompatActivity() {
         Aware.stopMagnetometer(this)
     }
 
-    fun collecting(){
+    private fun collecting(){
         val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
+
+        Glide.with(this).asBitmap().load(R.drawable.gears2).into(imageView)
+        imageView.visibility = View.VISIBLE
+        textView2.text = "Click Start button to begin collecting."
         startBtn.setOnClickListener{
             if (UserIDfield.text.length != 0){
-                UserID = UserIDfield.text.toString()
+                UserIDfield.isEnabled = false
                 Glide.with(this).asGif().load(R.drawable.gears2).into(imageView)
                 imageView.visibility = View.VISIBLE
                 textView2.text = "Collecting..."
+                UserID = UserIDfield.text.toString()
                 startBtn.isEnabled = false;
 
                 Aware.startMagnetometer(this)
@@ -141,9 +154,17 @@ class MainActivity : AppCompatActivity() {
                         done = true
                     })
                     writeCollectedData()
-                    SET_of_STAGES.minusElement(sharedPref.getInt("STAGE",-1))
-                    changeStage(SET_of_STAGES.random())
-                    startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
+                        println("stage to be removed is : "+sharedPref.getInt("STAGE",-1))
+                        SET_of_STAGES = SET_of_STAGES.minusElement(sharedPref.getInt("STAGE", -1))
+                    if (!SET_of_STAGES.isEmpty()) {
+                        changeStage(SET_of_STAGES.random())
+                        println(SET_of_STAGES + "bbbbbbbbbbbbbbbbbbbb")
+                        startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
+                    }
+                    else {
+                        startBtn.isEnabled = false
+                        textView2.text = "All stages are completed and all data needed is collected. Thank you!"
+                    }
                 }
 
                 try {

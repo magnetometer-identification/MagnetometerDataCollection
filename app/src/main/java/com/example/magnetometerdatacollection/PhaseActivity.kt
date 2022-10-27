@@ -12,6 +12,7 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
@@ -51,7 +52,7 @@ class PhaseActivity : AppCompatActivity() {
         }
 
         val tmEnabled =tm.isDataEnabled
-
+        var PASS_STAGE = false
         if (sharedPref.getInt("STAGE",-1) == 1){
             textView.text = "CURRENT STAGE: STAGE 1\n" +
                     "For this stage make sure that:\n"+
@@ -60,7 +61,7 @@ class PhaseActivity : AppCompatActivity() {
                     "Mobile Data is OFF\n" +
                     "Airplane mode is OFF\n" +
                     "Then please click the button below to continue!"
-            val PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
+            PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
             if (PASS_STAGE and inListener){
                 println("Stage 1 PASSED!")
                 finish()
@@ -74,7 +75,7 @@ class PhaseActivity : AppCompatActivity() {
                     "Mobile Data is OFF\n" +
                     "Airplane mode is OFF\n" +
                     "Then please click the button below to continue!"
-            val PASS_STAGE = (wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
+            PASS_STAGE = (wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
             if (PASS_STAGE and inListener){
                 println("Stage 2 PASSED!")
                 finish()
@@ -89,7 +90,7 @@ class PhaseActivity : AppCompatActivity() {
                     "Mobile Data is ON\n" +
                     "Airplane mode is OFF\n" +
                     "Then please click the button below to continue!"
-            val PASS_STAGE = !(wifi.isWifiEnabled) and (tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
+            PASS_STAGE = !(wifi.isWifiEnabled) and (tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
             if (PASS_STAGE and inListener){
                 println("Stage 3 PASSED!")
                 finish()
@@ -103,7 +104,7 @@ class PhaseActivity : AppCompatActivity() {
                     "Mobile Data is OFF\n" +
                     "Airplane mode is OFF\n" +
                     "Then please click the button below to continue!"
-            val PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and (myBluetoothAdapter.isEnabled) and !(AirPlainMode);
+            PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and (myBluetoothAdapter.isEnabled) and !(AirPlainMode);
             if (PASS_STAGE and inListener){
                 println("Stage 4 PASSED!")
                 finish()
@@ -111,14 +112,14 @@ class PhaseActivity : AppCompatActivity() {
         }
 
         else if (sharedPref.getInt("STAGE",-1) == 5){
-            textView.text = "CURRENT STAGE: STAGE \n" +
+            textView.text = "CURRENT STAGE: STAGE 5\n" +
                     "For this stage make sure that:\n"+
                     "WiFi is OFF\n" +
                     "Bluetooth is OFF\n" +
                     "Mobile Data is OFF\n" +
                     "Airplane mode is ON\n" +
                     "Then please click the button below to continue!"
-            val PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and (AirPlainMode);
+            PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and (AirPlainMode);
             if (PASS_STAGE and inListener){
                 println("Stage 5 PASSED!")
                 finish()
@@ -129,14 +130,16 @@ class PhaseActivity : AppCompatActivity() {
                     "WiFi is ON\n" +
                     "Bluetooth is ON\n" +
                     "Mobile Data is ON\n" +
-                    "Airplane mode is ON\n" +
+                    "Airplane mode is OFF\n" +
                     "Then please click the button below to continue!"
-            val PASS_STAGE = (wifi.isWifiEnabled) and (tmEnabled) and (myBluetoothAdapter.isEnabled) and (AirPlainMode);
+            PASS_STAGE = (wifi.isWifiEnabled) and (tmEnabled) and (myBluetoothAdapter.isEnabled);
             if (PASS_STAGE and inListener){
                 println("Stage 6 PASSED!")
                 finish()
             }
         }
+        if (!PASS_STAGE)
+            Toast.makeText(this,"Please fulfill all conditions for this stage to continue!",Toast.LENGTH_LONG).show()
     }
 
 }
