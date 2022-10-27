@@ -1,8 +1,10 @@
 package com.example.magnetometerdatacollection
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
@@ -23,35 +25,118 @@ class PhaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_phase)
         textView = findViewById(R.id.textView)
         button = findViewById(R.id.button2)
-        textView.text = "Data collection is done in 5 stages. First you need to disable WiFi, Bluetooth, Mobile Data and make sure that your phone is not in Airpain mode." +
-                "Then please click the button below!"
-        button.setOnClickListener{
-            val wifi : WifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
-            val tm = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-            val myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-            val AirPlainMode = Settings.System.getInt(contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) == 1
-
-            println("test button AirPlainMode == " + AirPlainMode)
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_PHONE_STATE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return@setOnClickListener
-            }
-            if (wifi.isWifiEnabled and myBluetoothAdapter.isEnabled and tm.isDataEnabled) {
-                //TODO: Code to execute if wifi is enabled.
-                println("test button")
-            }
-            println("test button MOB DATA " + tm.isDataEnabled)
+        checkStage(false)
+        button.setOnClickListener {
+            checkStage(true)
         }
 
     }
+
+    @SuppressLint("SetTextI18n")
+    fun checkStage(inListener: Boolean){
+        val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
+        val wifi: WifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val tm = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+        val myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        val AirPlainMode =
+            Settings.System.getInt(contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) == 1
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            println("No READ_PHONE_STATE permission!")
+            ActivityCompat.requestPermissions(this, Array<String>(1){Manifest.permission.READ_PHONE_STATE},PackageManager.PERMISSION_GRANTED)
+        }
+
+        val tmEnabled =tm.isDataEnabled
+
+        if (sharedPref.getInt("STAGE",-1) == 1){
+            textView.text = "CURRENT STAGE: STAGE 1\n" +
+                    "For this stage make sure that:\n"+
+                    "WiFi is OFF\n" +
+                    "Bluetooth is OFF\n" +
+                    "Mobile Data is OFF\n" +
+                    "Airplane mode is OFF\n" +
+                    "Then please click the button below to continue!"
+            val PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
+            if (PASS_STAGE and inListener){
+                println("Stage 1 PASSED!")
+                finish()
+            }
+        }
+        else if (sharedPref.getInt("STAGE",-1) == 2){
+            textView.text = "CURRENT STAGE: STAGE 2\n" +
+                    "For this stage make sure that:\n"+
+                    "WiFi is ON\n" +
+                    "Bluetooth is OFF\n" +
+                    "Mobile Data is OFF\n" +
+                    "Airplane mode is OFF\n" +
+                    "Then please click the button below to continue!"
+            val PASS_STAGE = (wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
+            if (PASS_STAGE and inListener){
+                println("Stage 2 PASSED!")
+                finish()
+            }
+        }
+
+        else if (sharedPref.getInt("STAGE",-1) == 3){
+            textView.text = "CURRENT STAGE: STAGE 3\n" +
+                    "For this stage make sure that:\n"+
+                    "WiFi is OFF\n" +
+                    "Bluetooth is OFF\n" +
+                    "Mobile Data is ON\n" +
+                    "Airplane mode is OFF\n" +
+                    "Then please click the button below to continue!"
+            val PASS_STAGE = !(wifi.isWifiEnabled) and (tmEnabled) and !(myBluetoothAdapter.isEnabled) and !(AirPlainMode);
+            if (PASS_STAGE and inListener){
+                println("Stage 3 PASSED!")
+                finish()
+            }
+        }
+        else if (sharedPref.getInt("STAGE",-1) == 4){
+            textView.text = "CURRENT STAGE: STAGE 4\n" +
+                    "For this stage make sure that:\n"+
+                    "WiFi is OFF\n" +
+                    "Bluetooth is ON\n" +
+                    "Mobile Data is OFF\n" +
+                    "Airplane mode is OFF\n" +
+                    "Then please click the button below to continue!"
+            val PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and (myBluetoothAdapter.isEnabled) and !(AirPlainMode);
+            if (PASS_STAGE and inListener){
+                println("Stage 4 PASSED!")
+                finish()
+            }
+        }
+
+        else if (sharedPref.getInt("STAGE",-1) == 5){
+            textView.text = "CURRENT STAGE: STAGE \n" +
+                    "For this stage make sure that:\n"+
+                    "WiFi is OFF\n" +
+                    "Bluetooth is OFF\n" +
+                    "Mobile Data is OFF\n" +
+                    "Airplane mode is ON\n" +
+                    "Then please click the button below to continue!"
+            val PASS_STAGE = !(wifi.isWifiEnabled) and !(tmEnabled) and !(myBluetoothAdapter.isEnabled) and (AirPlainMode);
+            if (PASS_STAGE and inListener){
+                println("Stage 5 PASSED!")
+                finish()
+            }
+        }else if (sharedPref.getInt("STAGE",-1) == 6){
+            textView.text = "CURRENT STAGE: STAGE 6\n" +
+                    "For this stage make sure that:\n"+
+                    "WiFi is ON\n" +
+                    "Bluetooth is ON\n" +
+                    "Mobile Data is ON\n" +
+                    "Airplane mode is ON\n" +
+                    "Then please click the button below to continue!"
+            val PASS_STAGE = (wifi.isWifiEnabled) and (tmEnabled) and (myBluetoothAdapter.isEnabled) and (AirPlainMode);
+            if (PASS_STAGE and inListener){
+                println("Stage 6 PASSED!")
+                finish()
+            }
+        }
+    }
+
 }

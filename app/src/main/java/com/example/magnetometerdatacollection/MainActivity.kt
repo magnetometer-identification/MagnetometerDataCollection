@@ -1,6 +1,6 @@
 package com.example.magnetometerdatacollection
 
-import android.R.id.message
+import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,14 +10,14 @@ import com.aware.Aware
 import com.aware.Magnetometer
 import com.aware.providers.Magnetometer_Provider
 import com.bumptech.glide.Glide
+import com.google.gson.GsonBuilder
 import java.io.File
 import java.util.*
 import kotlin.concurrent.schedule
 
-import com.google.gson.GsonBuilder
-
 @Suppress("UNREACHABLE_CODE")
 class MainActivity : AppCompatActivity() {
+
 
     lateinit var startBtn: Button
     lateinit var  textView2: TextView
@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var deviceID: String
     lateinit var UserID: String
+
+    var SET_of_STAGES = setOf<Int> (1,2,3,4,5,6)
 
     var done: Boolean = false
     data class DataCollected (
@@ -41,21 +43,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val sharedPref = getSharedPreferences("FileName or PrefsName", MODE_PRIVATE)
-        val prefEditor = sharedPref.edit()
-
-        try {
-            if (!sharedPref.contains("STAGE")){
-                //Stage cariable set to 1
-                prefEditor.putInt("STAGE", 1)
-                prefEditor.commit()
-
-                println("add config file success "+ sharedPref.getInt("STAGE",-1))
-            }
-        }
-        catch (e: Exception){
-            println("add config file fail")
-        }
+        changeStage(SET_of_STAGES.random())
 
         startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
 
@@ -64,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         imageView = findViewById(R.id.imageView)
         UserIDfield = findViewById(R.id.UserIDfield)
 
-
+        instanceOfList = listOf()
         Aware.startAWARE(applicationContext)
 
         Magnetometer.setSensorObserver {
@@ -83,21 +71,45 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun changeStage(stage_num: Int){
+
+        val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
+        val prefEditor = sharedPref.edit()
+
+        try {
+            if (!sharedPref.contains("STAGE")){
+                //Stage cariable set to stage_num
+                prefEditor.putInt("STAGE", stage_num)
+                prefEditor.commit()
+
+                println("add config file success "+ sharedPref.getInt("STAGE",-1))
+            }
+        }
+        catch (e: Exception){
+            println("add config file fail")
+        }
+    }
     override fun onResume() {
         super.onResume()
         collecting()
-        writeCollectedData()
     }
 
     private fun writeCollectedData() {
 
         //creating data file for collection in new folder
-        val path = this.getFilesDir()
+//        val contextWrapper = ContextWrapper(applicationContext)
+//        val path = contextWrapper.data
+        val path = applicationContext.getExternalFilesDir(null)
         val collDataDir = File(path, "collectedData")
         collDataDir.mkdirs()
         val gsonPretty = GsonBuilder().setPrettyPrinting().create()
         val jsonTutsListPretty: String = gsonPretty.toJson(listOf(instanceOfList))
-        File(collDataDir,"Data"+UserID+".json").writeText(jsonTutsListPretty)
+        println(collDataDir.toPath().toString())
+        println("Data"+UserID+".json")
+        println(jsonTutsListPretty)
+        File(collDataDir,"/Data"+UserID+".json").writeText(jsonTutsListPretty)
+        println(File(collDataDir,"Data"+UserID+".json").exists())
+        println(File(collDataDir,"Data"+UserID+".json").path)
     }
 
     override fun onPause() {
@@ -106,8 +118,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun collecting(){
+        val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
         startBtn.setOnClickListener{
-            if ((UserIDfield.isFocused) and (UserIDfield.text.length != 0)){
+            if (UserIDfield.text.length != 0){
+                UserID = UserIDfield.text.toString()
                 Glide.with(this).asGif().load(R.drawable.gears2).into(imageView)
                 imageView.visibility = View.VISIBLE
                 textView2.text = "Collecting..."
@@ -126,6 +140,10 @@ class MainActivity : AppCompatActivity() {
                         startBtn.isEnabled = true;
                         done = true
                     })
+                    writeCollectedData()
+                    SET_of_STAGES.minusElement(sharedPref.getInt("STAGE",-1))
+                    changeStage(SET_of_STAGES.random())
+                    startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
                 }
 
                 try {
