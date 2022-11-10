@@ -8,12 +8,14 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.aware.Aware
+import com.aware.Aware_Preferences
 import com.aware.Magnetometer
 import com.aware.providers.Magnetometer_Provider
 import com.bumptech.glide.Glide
 import com.google.gson.GsonBuilder
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 
 @Suppress("UNREACHABLE_CODE")
@@ -39,7 +41,13 @@ class MainActivity : AppCompatActivity() {
         val stage: Int,
         val mtx_xyzt: List<List<Any>>
             )
-    lateinit var instanceOfList: List<Any>
+    lateinit var instanceOfList: MutableMap<String,Any>
+    lateinit var id: String
+    lateinit var list_X: ArrayList<Any>
+    lateinit var list_Y: ArrayList<Any>
+    lateinit var list_Z: ArrayList<Any>
+    lateinit var list_timeStamp: ArrayList<Any>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,16 +65,23 @@ class MainActivity : AppCompatActivity() {
         imageView = findViewById(R.id.imageView)
         UserIDfield = findViewById(R.id.UserIDfield)
 
-        instanceOfList = listOf()
+        list_X = ArrayList<Any>()
+        list_Y = ArrayList<Any>()
+        list_Z = ArrayList<Any>()
+        list_timeStamp = ArrayList<Any>()
         Aware.startAWARE(applicationContext)
-
+        Aware.setSetting(this, Aware_Preferences.FREQUENCY_MAGNETOMETER,200000) //that is default
         Magnetometer.setSensorObserver {
+            id = it.getAsString(Magnetometer_Provider.Magnetometer_Data.DEVICE_ID)
             val x = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_0)
             val y = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_1)
             val z = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_2)
             val t = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.TIMESTAMP)
             println("x = $x y = $y, z = $z, timestamp = $t")
-            instanceOfList = listOf(x,y,z,t)
+            list_X.add(x)
+            list_Y.add(y)
+            list_Z.add(z)
+            list_timeStamp.add(t)
         }
 //        Glide.with(this).load(R.drawable.gears2).into(imageView)
 //        Glide.with(this).asBitmap().load(R.drawable.gears2).into(imageView)
@@ -107,6 +122,12 @@ class MainActivity : AppCompatActivity() {
         //creating data file for collection in new folder
 //        val contextWrapper = ContextWrapper(applicationContext)
 //        val path = contextWrapper.data
+        val instanceOfList = mutableMapOf<String, Any>()
+        instanceOfList["DEVICE_ID"] = id
+        instanceOfList["X"] = list_X
+        instanceOfList["Y"] = list_Y
+        instanceOfList["Z"] = list_Z
+        instanceOfList["time"] = list_timeStamp
         val path = applicationContext.getExternalFilesDir(null)
         val collDataDir = File(path, "collectedData")
         collDataDir.mkdirs()
