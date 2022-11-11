@@ -54,9 +54,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val sharedPref: SharedPreferences = getSharedPreferences("SharedVal", MODE_PRIVATE)
-        SET_of_STAGES = SET_of_STAGES.minusElement(sharedPref.getInt("STAGE", -1))
+//        SET_of_STAGES = SET_of_STAGES.minusElement(sharedPref.getInt("STAGE", -1))
         changeStage(SET_of_STAGES.random())
-        println(SET_of_STAGES + "aaaaaaaaaaaaaaaaaaa")
+//        println(SET_of_STAGES + "aaaaaaaaaaaaaaaaaaa")
 
         startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
 
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         list_Y = ArrayList<Any>()
         list_Z = ArrayList<Any>()
         list_timeStamp = ArrayList<Any>()
-        Aware.startAWARE(applicationContext)
+//        Aware.startAWARE(applicationContext)
         Aware.setSetting(this, Aware_Preferences.FREQUENCY_MAGNETOMETER,200000) //that is default
         Magnetometer.setSensorObserver {
             id = it.getAsString(Magnetometer_Provider.Magnetometer_Data.DEVICE_ID)
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             val y = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_1)
             val z = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_2)
             val t = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.TIMESTAMP)
-            println("x = $x y = $y, z = $z, timestamp = $t")
+//            println("x = $x y = $y, z = $z, timestamp = $t")
             list_X.add(x)
             list_Y.add(y)
             list_Z.add(z)
@@ -99,21 +99,23 @@ class MainActivity : AppCompatActivity() {
         try {
 //            if (!sharedPref.contains("STAGE")){
                 //Stage cariable set to stage_num
+            println(stage_num)
                 prefEditor.putInt("STAGE", stage_num)
                 prefEditor.commit()
 
-                println("add config file success "+ sharedPref.getInt("STAGE",-1))
+//                println("add config file success "+ sharedPref.getInt("STAGE",-1))
 //            }
 //            else{
 //                prefEditor.
 //            }
         }
         catch (e: Exception){
-            println("add config file fail")
+//            println("add config file fail")
         }
     }
     override fun onResume() {
         super.onResume()
+        Aware.startAWARE(applicationContext)
         collecting()
     }
 
@@ -123,7 +125,9 @@ class MainActivity : AppCompatActivity() {
 //        val contextWrapper = ContextWrapper(applicationContext)
 //        val path = contextWrapper.data
         val instanceOfList = mutableMapOf<String, Any>()
+        val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
         instanceOfList["DEVICE_ID"] = id
+        instanceOfList["stage"] = sharedPref.getInt("STAGE",-1)
         instanceOfList["X"] = list_X
         instanceOfList["Y"] = list_Y
         instanceOfList["Z"] = list_Z
@@ -133,12 +137,13 @@ class MainActivity : AppCompatActivity() {
         collDataDir.mkdirs()
         val gsonPretty = GsonBuilder().setPrettyPrinting().create()
         val jsonTutsListPretty: String = gsonPretty.toJson(listOf(instanceOfList))
-        println(collDataDir.toPath().toString())
-        println("Data"+UserID+".json")
-        println(jsonTutsListPretty)
-        File(collDataDir,"/Data"+UserID+".json").writeText(jsonTutsListPretty)
-        println(File(collDataDir,"Data"+UserID+".json").exists())
-        println(File(collDataDir,"Data"+UserID+".json").path)
+//        println(collDataDir.toPath().toString())
+//        println("Data"+UserID+".json")
+//        println(jsonTutsListPretty)
+        File(collDataDir,"/Data_"+id+"_"+sharedPref.getInt("STAGE",-1)+"_"+UserID+".json").writeText(jsonTutsListPretty)
+        println("printed"+sharedPref.getInt("STAGE",-1))
+//        println(File(collDataDir,"Data"+UserID+".json").exists())
+//        println(File(collDataDir,"Data"+UserID+".json").path)
     }
 
     override fun onPause() {
@@ -175,16 +180,23 @@ class MainActivity : AppCompatActivity() {
                         done = true
                     })
                     writeCollectedData()
-                        println("stage to be removed is : "+sharedPref.getInt("STAGE",-1))
-                        SET_of_STAGES = SET_of_STAGES.minusElement(sharedPref.getInt("STAGE", -1))
+                    println("stage to be removed is : "+sharedPref.getInt("STAGE",-1))
+                    println(SET_of_STAGES.toString() + " cccccccccccccc " + sharedPref.getInt("STAGE",-1))
+                    SET_of_STAGES = SET_of_STAGES.minusElement(sharedPref.getInt("STAGE",-1))
                     if (!SET_of_STAGES.isEmpty()) {
+//                        println("prije  "+SET_of_STAGES)
+                        println("medju "+SET_of_STAGES.toString())
                         changeStage(SET_of_STAGES.random())
-                        println(SET_of_STAGES + "bbbbbbbbbbbbbbbbbbbb")
+                        println(SET_of_STAGES.toString() + "bbbbbbbbbbbbbbbbbbbb")
                         startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
                     }
                     else {
-                        startBtn.isEnabled = false
-                        textView2.text = "All stages are completed and all data needed is collected. Thank you!"
+                        runOnUiThread(java.lang.Runnable {
+                            Glide.with(applicationContext).asBitmap().load(R.drawable.done_icon).into(imageView)
+                            //                    imageView.visibility = View.INVISIBLE
+                            startBtn.isEnabled = false
+                            textView2.text = "All stages are completed and all data needed is collected. Thank you!"
+                        })
                     }
                 }
 
