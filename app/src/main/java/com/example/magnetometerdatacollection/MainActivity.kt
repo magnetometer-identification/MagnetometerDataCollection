@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 //        Aware.startAWARE(applicationContext)
         Aware.setSetting(this, Aware_Preferences.FREQUENCY_MAGNETOMETER,200000) //that is default
         Magnetometer.setSensorObserver {
-            id = it.getAsString(Magnetometer_Provider.Magnetometer_Data.DEVICE_ID)
+            id = it.getAsString(Magnetometer_Provider.Magnetometer_Data.DEVICE_ID)  
             val x = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_0)
             val y = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_1)
             val z = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_2)
