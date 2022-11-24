@@ -5,14 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.hardware.Sensor
-<<<<<<< Updated upstream
-=======
-import android.hardware.SensorEvent
->>>>>>> Stashed changes
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -25,20 +20,8 @@ import com.google.gson.GsonBuilder
 import java.io.File
 import java.util.*
 import kotlin.concurrent.schedule
-<<<<<<< Updated upstream
 import android.hardware.SensorEvent
 import android.util.Log
-
-
-@Suppress("UNREACHABLE_CODE")
-abstract class MainActivity : AppCompatActivity(), SensorEventListener {
-
-    // Sensors & SensorManager
-//    private lateinit var magnetometer: Sensor
-//    private lateinit var mSensorManager: SensorManager
-//    // Storage for Sensor readings
-//    private lateinit var mGeomagnetic: FloatArray
-=======
 import kotlin.properties.Delegates
 
 @Suppress("UNREACHABLE_CODE")
@@ -48,7 +31,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var mSensorManager: SensorManager
     // Storage for Sensor readings
     private lateinit var mGeomagnetic:  ArrayList<Float>
->>>>>>> Stashed changes
 
     var con by Delegates.notNull<Int>()
     lateinit var startBtn: Button
@@ -138,28 +120,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //        imageView.visibility = View.INVISIBLE
 
     }
-    override fun onSensorChanged(event: SensorEvent?) {
 
-        // Acquire magnetometer event data
-//        if (mGeomagnetic != null) {
-//            Log.d(TAG, "mx : "+mGeomagnetic[0]+" my : "+mGeomagnetic[1]+" mz : "+mGeomagnetic[2]);
-//        }
-//        else if (event != null) {
-//            if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-//                if (event != null) {
-//                    System.arraycopy(event.values, 0, mGeomagnetic, 0, 3)
-//                };
-//
-//            }
-//        }
-
-        // If we have readings from both sensors then
-        // use the readings to compute the device's orientation
-        // and then update the display.
-
-
-
-    }
     fun changeStage(stage_num: Int){
         val sharedPref: SharedPreferences = getSharedPreferences("SharedVal", MODE_PRIVATE)
 
@@ -184,16 +145,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
     override fun onResume() {
         super.onResume()
-<<<<<<< Updated upstream
-        // Register for sensor updates
-//        mSensorManager.registerListener(this, magnetometer,
-//            SensorManager.SENSOR_DELAY_NORMAL);
-=======
-
         // Register for sensor updates
         mSensorManager.registerListener(this, magnetometer,
             SensorManager.SENSOR_DELAY_NORMAL);
->>>>>>> Stashed changes
 
         Aware.startAWARE(applicationContext)
         collecting()
@@ -228,14 +182,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onPause() {
         super.onPause()
-<<<<<<< Updated upstream
-        // Unregister all sensors
-//        mSensorManager.unregisterListener(this);
-=======
 
         // Unregister all sensors
         mSensorManager.unregisterListener(this);
->>>>>>> Stashed changes
 
         Aware.stopMagnetometer(this)
     }
