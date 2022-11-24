@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         UserIDfield = findViewById(R.id.UserIDfield)
 
         list_X = ArrayList<Any>()
-        list_Y = ArrayList<Any>()
+        list_Y = ArrayList<Any>()    
         list_Z = ArrayList<Any>()
         list_timeStamp = ArrayList<Any>()
 //        Aware.startAWARE(applicationContext)
