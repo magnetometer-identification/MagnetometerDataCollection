@@ -5,9 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.hardware.Sensor
+<<<<<<< Updated upstream
+=======
+import android.hardware.SensorEvent
+>>>>>>> Stashed changes
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +25,7 @@ import com.google.gson.GsonBuilder
 import java.io.File
 import java.util.*
 import kotlin.concurrent.schedule
+<<<<<<< Updated upstream
 import android.hardware.SensorEvent
 import android.util.Log
 
@@ -32,7 +38,19 @@ abstract class MainActivity : AppCompatActivity(), SensorEventListener {
 //    private lateinit var mSensorManager: SensorManager
 //    // Storage for Sensor readings
 //    private lateinit var mGeomagnetic: FloatArray
+=======
+import kotlin.properties.Delegates
 
+@Suppress("UNREACHABLE_CODE")
+class MainActivity : AppCompatActivity(), SensorEventListener {
+    // Sensors & SensorManager
+    private lateinit var magnetometer: Sensor
+    private lateinit var mSensorManager: SensorManager
+    // Storage for Sensor readings
+    private lateinit var mGeomagnetic:  ArrayList<Float>
+>>>>>>> Stashed changes
+
+    var con by Delegates.notNull<Int>()
     lateinit var startBtn: Button
     lateinit var  textView2: TextView
     lateinit var imageView: ImageView
@@ -79,6 +97,16 @@ abstract class MainActivity : AppCompatActivity(), SensorEventListener {
 //        println(SET_of_STAGES + "aaaaaaaaaaaaaaaaaaa")
 
         startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
+
+        // Get a reference to the SensorManager
+        mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        // Get a reference to the magnetometer
+        magnetometer = mSensorManager!!
+            .getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+        // Exit unless sensor are available
+        if (null == magnetometer)
+            finish();
+        con = 0
 
         startBtn = findViewById(R.id.button)
         textView2 = findViewById(R.id.textView2)
@@ -156,9 +184,16 @@ abstract class MainActivity : AppCompatActivity(), SensorEventListener {
     }
     override fun onResume() {
         super.onResume()
+<<<<<<< Updated upstream
         // Register for sensor updates
 //        mSensorManager.registerListener(this, magnetometer,
 //            SensorManager.SENSOR_DELAY_NORMAL);
+=======
+
+        // Register for sensor updates
+        mSensorManager.registerListener(this, magnetometer,
+            SensorManager.SENSOR_DELAY_NORMAL);
+>>>>>>> Stashed changes
 
         Aware.startAWARE(applicationContext)
         collecting()
@@ -193,8 +228,14 @@ abstract class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onPause() {
         super.onPause()
+<<<<<<< Updated upstream
         // Unregister all sensors
 //        mSensorManager.unregisterListener(this);
+=======
+
+        // Unregister all sensors
+        mSensorManager.unregisterListener(this);
+>>>>>>> Stashed changes
 
         Aware.stopMagnetometer(this)
     }
@@ -257,6 +298,53 @@ abstract class MainActivity : AppCompatActivity(), SensorEventListener {
             }
             else{
                 Toast.makeText(this, "Please input some username first!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onSensorChanged(p0: SensorEvent?) {
+        if (con == 1) {
+//            if (mGeomagnetic != null) {
+//                Log.d(TAG, "mx : "+ mGeomagnetic!![0]+" my : "+ mGeomagnetic!![1]+" mz : "+ mGeomagnetic!![2]);
+//            }
+//            if (p0 != null) {
+//                if (p0.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+//                    if (p0 != null) {
+//                        System.arraycopy(p0.values, 0, mGeomagnetic, 0, 3)
+//                    };
+//
+//                }
+//            }
+//        }
+//            if (p0 != null) {
+////                mGeomagnetic?.let { System.arraycopy(p0.values, 0, it, 0, 3) }
+//                mGeomagnetic.add(p0.values[0])
+//            }
+            if (p0 != null) {
+                println("mx : " + p0.values[1])
+            };
+            println("mx : x ");
+        }
+    }
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+        if (p0 === magnetometer) {
+            when (p1) {
+                0 -> {
+                    println("Unreliable")
+                    con = 0
+                }
+                1 -> {
+                    println("Low Accuracy")
+                    con = 0
+                }
+                2 -> {
+                    println("Medium Accuracy")
+                    con = 0
+                }
+                3 -> {
+                    println("High Accuracy")
+                    con = 1
+                }
             }
         }
     }
