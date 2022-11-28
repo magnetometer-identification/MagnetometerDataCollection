@@ -4,8 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
-import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.provider.Settings
@@ -15,7 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.aware.Aware
 
 
 @Suppress("DEPRECATION")
@@ -33,6 +32,8 @@ class PhaseActivity : AppCompatActivity() {
         }
 
     }
+
+
 
     @SuppressLint("SetTextI18n")
     fun checkStage(inListener: Boolean){

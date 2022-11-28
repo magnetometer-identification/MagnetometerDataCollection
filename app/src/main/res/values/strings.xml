@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">MagnetometerDataCollection</string>
     <string name="start_collecting">START COLLECTING</string>
+    <string name="do_you_really_want_to_signout">Please connect phone to internet so we can send files to server!</string>
+    <string name="messageConnection">Please connect phone to the internet!</string>
+    <string name="internetConn">No internet connection</string>
+    <string name="done">DONE</string>
+    <string name="not_conn">Not connected yet!</string>
 </resources>

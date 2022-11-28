@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "80401869786",
+    "project_id": "magnetometer-data-collection",
+    "storage_bucket": "magnetometer-data-collection.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80401869786:android:990149a1ec8b96605c2ee3",
+        "android_client_info": {
+          "package_name": "com.example.magnetometerdatacollection"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "80401869786-dfntcm731eghnlqvt3v6h2ofuvgoobj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTeQQcY8wjkMPWj1pfb9Cce1-BQwXcKSI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "80401869786-dfntcm731eghnlqvt3v6h2ofuvgoobj0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
