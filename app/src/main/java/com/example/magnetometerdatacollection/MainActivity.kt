@@ -53,7 +53,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     lateinit var UserID: String
 
 
-    var SET_of_STAGES = setOf<Int> (1,2,3,4,5,6)
+//    var SET_of_STAGES = setOf<Int> (1,2,3,4,5,6)
+//    var Firebase_location = "files/"
+
+    var SET_of_STAGES = setOf<Int> (1,6)  //two_stages_only ALL ON/ ALL OFF
+    var Firebase_location = "files_for_only_two_stages/"
+    var SoS_size = SET_of_STAGES.size
 
     var done: Boolean = false
 //    data class DataCollected (
@@ -74,6 +79,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     lateinit var new_b_list_X: ArrayList<Any>
     lateinit var new_b_list_Y: ArrayList<Any>
     lateinit var new_b_list_Z: ArrayList<Any>
+    lateinit var new_b_list_T: ArrayList<Any>
     lateinit var list_timeStamp: ArrayList<Any>
     lateinit var phoneDir: String
     lateinit var ListOfFiles: ArrayList<String>
@@ -99,12 +105,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
 
+//        SensorManager.SENSOR_DELAY_FASTEST
+//        SensorManager.SENSOR_DELAY_NORMAL
+
         // Get a reference to the SensorManager
         mSensorManager = applicationContext.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-
         // Get a reference to the magnetometer
         magnetometer = mSensorManager!!
             .getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED)
+
         // Exit unless sensor are available
         con = 0
 
@@ -123,6 +132,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         new_b_list_X = ArrayList<Any>()
         new_b_list_Y = ArrayList<Any>()
         new_b_list_Z = ArrayList<Any>()
+        new_b_list_T = ArrayList<Any>()
         ListOfFiles = ArrayList<String>()
         sent = 0
 
@@ -207,6 +217,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         instanceOfList["X_Bias"] = new_b_list_X
         instanceOfList["Y_Bias"] = new_b_list_Y
         instanceOfList["Z_Bias"] = new_b_list_Z
+        instanceOfList["time_UnCal"] = new_b_list_T
         val path = applicationContext.getExternalFilesDir(null)
         val collDataDir = File(path, "collectedData")
         collDataDir.mkdirs()
@@ -251,9 +262,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 //-------------------------------------------------
                 Aware.startMagnetometer(this)
                 mSensorManager.registerListener(this, magnetometer,
-                    SensorManager.SENSOR_DELAY_NORMAL);
+                    SensorManager.SENSOR_DELAY_FASTEST);
                 //-------------------------------------------------
-                Timer().schedule(5000) {
+                Timer().schedule(60000) {
                     //-------------------------------------------------
                     Aware.stopMagnetometer(applicationContext)
                     mSensorManager.unregisterListener(this@MainActivity);
@@ -306,7 +317,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                                 val elem = ListOfFiles.first()
                                 sendFileToFirebase(elem as String)
                             }
-                            Toast.makeText(applicationContext, "KOJI KURAC", Toast.LENGTH_SHORT).show()
                             Timer().schedule(10000) {}
                         })
 //                        runOnUiThread(java.lang.Runnable {
@@ -338,6 +348,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 new_b_list_X.add(p0.values[3])
                 new_b_list_Y.add(p0.values[4])
                 new_b_list_Z.add(p0.values[5])
+
+                new_b_list_T.add(p0.timestamp)
                 println("mx : " + p0.values[0])
                 println("my : " + p0.values[1])
                 println("mz : " + p0.values[2])
@@ -371,7 +383,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
     fun sendFileToFirebase (FileName:String){
         println("Početak slanja")
-        val storageRef: StorageReference = Firebase.storage.reference.child("files/"+FileName)
+        val storageRef: StorageReference = Firebase.storage.reference.child(Firebase_location+FileName)
         val stream = FileInputStream(File(phoneDir+"/"+FileName))
         val uploadTask = storageRef.putStream(stream)
         println("Završetak slanja")
@@ -380,7 +392,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             Log.e("Firebase", "File Upload passed")
             println("Uspješno slanje")
 //            Toast.makeText(this, sent , Toast.LENGTH_SHORT).show()
-            if (sent == 6){
+            if (sent == SoS_size){
                 Glide.with(applicationContext).asBitmap().load(R.drawable.done_icon).into(imageView)
                 textView2.text = "All stages are completed and all data needed is collected. Thank you!"
             }
