@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //    var SET_of_STAGES = setOf<Int> (1,2,3,4,5,6)
 //    var Firebase_location = "files/"
 
-    var SET_of_STAGES = setOf<Int> (1,6)  //two_stages_only ALL ON/ ALL OFF
+    var SET_of_STAGES = setOf<Int> (5,6)  //two_stages_only ALL ON/ ALL OFF
     var Firebase_location = "files_for_only_two_stages/"
     var SoS_size = SET_of_STAGES.size
 
