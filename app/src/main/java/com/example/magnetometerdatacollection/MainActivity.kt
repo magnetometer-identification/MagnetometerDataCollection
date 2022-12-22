@@ -12,6 +12,7 @@ import android.hardware.SensorManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -113,7 +114,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // Get a reference to the magnetometer
         magnetometer = mSensorManager!!
             .getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED)
-
+        id = magnetometer.id.toString()
         // Exit unless sensor are available
         con = 0
 
@@ -122,33 +123,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         imageView = findViewById(R.id.imageView)
         UserIDfield = findViewById(R.id.UserIDfield)
 
-        list_X = ArrayList<Any>()
-        list_Y = ArrayList<Any>()    
-        list_Z = ArrayList<Any>()
-        list_timeStamp = ArrayList<Any>()
-        new_list_X = ArrayList<Any>()
-        new_list_Y = ArrayList<Any>()
-        new_list_Z = ArrayList<Any>()
-        new_b_list_X = ArrayList<Any>()
-        new_b_list_Y = ArrayList<Any>()
-        new_b_list_Z = ArrayList<Any>()
-        new_b_list_T = ArrayList<Any>()
+        init_lists_2_empty()
         ListOfFiles = ArrayList<String>()
         sent = 0
 
-        Aware.setSetting(this, Aware_Preferences.FREQUENCY_MAGNETOMETER,200000) //that is default
-        Magnetometer.setSensorObserver {
-            id = it.getAsString(Magnetometer_Provider.Magnetometer_Data.DEVICE_ID)
-            val x = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_0)
-            val y = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_1)
-            val z = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_2)
-            val t = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.TIMESTAMP)
-//            println("x = $x y = $y, z = $z, timestamp = $t")
-            list_X.add(x)
-            list_Y.add(y)
-            list_Z.add(z)
-            list_timeStamp.add(t)
-        }
+//        Aware.setSetting(this, Aware_Preferences.FREQUENCY_MAGNETOMETER,200000) //that is default
+//        Magnetometer.setSensorObserver {
+//            id = it.getAsString(Magnetometer_Provider.Magnetometer_Data.DEVICE_ID)
+//            val x = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_0)
+//            val y = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_1)
+//            val z = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.VALUES_2)
+//            val t = it.getAsDouble(Magnetometer_Provider.Magnetometer_Data.TIMESTAMP)
+////            println("x = $x y = $y, z = $z, timestamp = $t")
+//            list_X.add(x)
+//            list_Y.add(y)
+//            list_Z.add(z)
+//            list_timeStamp.add(t)
+//        }
 //        Glide.with(this).load(R.drawable.gears2).into(imageView)
 //        Glide.with(this).asBitmap().load(R.drawable.gears2).into(imageView)
 
@@ -194,7 +185,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //        mSensorManager.registerListener(this, magnetometer,
 //            SensorManager.SENSOR_DELAY_NORMAL);
 
-        Aware.startAWARE(applicationContext)
+//        Aware.startAWARE(applicationContext)
         collecting()
     }
 
@@ -205,12 +196,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //        val path = contextWrapper.data
         val instanceOfList = mutableMapOf<String, Any>()
         val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
-        instanceOfList["DEVICE_ID_AWARE"] = id
         instanceOfList["stage"] = sharedPref.getInt("STAGE",-1)
-        instanceOfList["X_AWARE"] = list_X
-        instanceOfList["Y_AWARE"] = list_Y
-        instanceOfList["Z_AWARE"] = list_Z
-        instanceOfList["time_AWARE"] = list_timeStamp
+//        instanceOfList["X_AWARE"] = list_X
+//        instanceOfList["Y_AWARE"] = list_Y
+//        instanceOfList["Z_AWARE"] = list_Z
+//        instanceOfList["time_AWARE"] = list_timeStamp
+
+//        id = magnetometer.id.toString()
+        id = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        instanceOfList["DEVICE_ID"] = id
+
         instanceOfList["X_UnCal"] = new_list_X
         instanceOfList["Y_UnCal"] = new_list_Y
         instanceOfList["Z_UnCal"] = new_list_Z
@@ -218,6 +213,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         instanceOfList["Y_Bias"] = new_b_list_Y
         instanceOfList["Z_Bias"] = new_b_list_Z
         instanceOfList["time_UnCal"] = new_b_list_T
+        init_lists_2_empty()
         val path = applicationContext.getExternalFilesDir(null)
         val collDataDir = File(path, "collectedData")
         collDataDir.mkdirs()
@@ -235,11 +231,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //        println(File(collDataDir,"Data"+UserID+".json").exists())
 //        println(File(collDataDir,"Data"+UserID+".json").path)
     }
-
+    fun init_lists_2_empty(){
+        list_X = ArrayList<Any>()
+        list_Y = ArrayList<Any>()
+        list_Z = ArrayList<Any>()
+        list_timeStamp = ArrayList<Any>()
+        new_list_X = ArrayList<Any>()
+        new_list_Y = ArrayList<Any>()
+        new_list_Z = ArrayList<Any>()
+        new_b_list_X = ArrayList<Any>()
+        new_b_list_Y = ArrayList<Any>()
+        new_b_list_Z = ArrayList<Any>()
+        new_b_list_T = ArrayList<Any>()
+    }
     override fun onPause() {
         super.onPause()
 
-        Aware.stopMagnetometer(this)
+//        Aware.stopMagnetometer(this)
         // Unregister all sensors
         mSensorManager.unregisterListener(this);
     }
@@ -260,13 +268,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 startBtn.isEnabled = false;
                 //connect to magnetometer through AWARE and normal
                 //-------------------------------------------------
-                Aware.startMagnetometer(this)
+//                Aware.startMagnetometer(this)
                 mSensorManager.registerListener(this, magnetometer,
                     SensorManager.SENSOR_DELAY_FASTEST);
                 //-------------------------------------------------
                 Timer().schedule(60000) {
                     //-------------------------------------------------
-                    Aware.stopMagnetometer(applicationContext)
+//                    Aware.stopMagnetometer(applicationContext)
                     mSensorManager.unregisterListener(this@MainActivity);
                     println("Readings stopped!")
                     //-------------------------------------------------
