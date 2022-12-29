@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.set
 import androidx.core.view.isVisible
 import com.aware.Aware
 import com.aware.Aware_Preferences
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     lateinit var  textView2: TextView
     lateinit var imageView: ImageView
     lateinit var UserIDfield: EditText
+    lateinit var folderField: EditText
 
     lateinit var deviceID: String
     lateinit var UserID: String
@@ -81,6 +83,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     lateinit var new_b_list_Y: ArrayList<Any>
     lateinit var new_b_list_Z: ArrayList<Any>
     lateinit var new_b_list_T: ArrayList<Any>
+    lateinit var con_list: ArrayList<Any>
     lateinit var list_timeStamp: ArrayList<Any>
     lateinit var phoneDir: String
     lateinit var ListOfFiles: ArrayList<String>
@@ -122,6 +125,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         textView2 = findViewById(R.id.textView2)
         imageView = findViewById(R.id.imageView)
         UserIDfield = findViewById(R.id.UserIDfield)
+        folderField = findViewById(R.id.folderField)
 
         init_lists_2_empty()
         ListOfFiles = ArrayList<String>()
@@ -145,7 +149,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
 //        Glide.with(this).asGif().load(R.drawable.gears2).into(imageView)
 //        imageView.visibility = View.INVISIBLE
-
+        collecting()
     }
     private fun haveConnection(): Boolean {
         val connectivityManager = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -181,12 +185,23 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
     override fun onResume() {
         super.onResume()
+//        if (SET_of_STAGES.size == ListOfFiles.size)
+//        {
+//            Glide.with(applicationContext).asBitmap().load(R.drawable.done_icon).into(imageView)
+//            imageView.visibility = View.VISIBLE
+//            textView2.text = "Data collected!"
+//        }
+//        else {
+//            Glide.with(this).asBitmap().load(R.drawable.gears2).into(imageView)
+//            imageView.visibility = View.VISIBLE
+//            textView2.text = "Click Start button to begin collecting."
+//        }
         // Register for sensor updates
 //        mSensorManager.registerListener(this, magnetometer,
 //            SensorManager.SENSOR_DELAY_NORMAL);
 
 //        Aware.startAWARE(applicationContext)
-        collecting()
+//        collecting()
     }
 
     private fun writeCollectedData() {
@@ -213,6 +228,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         instanceOfList["Y_Bias"] = new_b_list_Y
         instanceOfList["Z_Bias"] = new_b_list_Z
         instanceOfList["time_UnCal"] = new_b_list_T
+        instanceOfList["Accuracy"] = con_list
         init_lists_2_empty()
         val path = applicationContext.getExternalFilesDir(null)
         val collDataDir = File(path, "collectedData")
@@ -243,24 +259,36 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         new_b_list_Y = ArrayList<Any>()
         new_b_list_Z = ArrayList<Any>()
         new_b_list_T = ArrayList<Any>()
+        con_list = ArrayList<Any>()
     }
     override fun onPause() {
         super.onPause()
 
 //        Aware.stopMagnetometer(this)
         // Unregister all sensors
+//        mSensorManager.unregisterListener(this);
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         mSensorManager.unregisterListener(this);
+    }
+
+    override fun onStart() {
+        super.onStart()
+
     }
 
     private fun collecting(){
         val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
 
         Glide.with(this).asBitmap().load(R.drawable.gears2).into(imageView)
-        imageView.visibility = View.VISIBLE
+        imageView.visibility = ImageView.VISIBLE
         textView2.text = "Click Start button to begin collecting."
         startBtn.setOnClickListener{
             if (UserIDfield.text.length != 0){
                 UserIDfield.isEnabled = false
+                folderField.isEnabled = false
                 Glide.with(this).asGif().load(R.drawable.gears2).into(imageView)
                 imageView.visibility = View.VISIBLE
                 textView2.text = "Collecting..."
@@ -279,9 +307,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     println("Readings stopped!")
                     //-------------------------------------------------
                     runOnUiThread(java.lang.Runnable {
-                        Glide.with(applicationContext).asBitmap().load(R.drawable.done_icon).into(imageView)
+                        Glide.with(applicationContext).asBitmap().load(R.drawable.gears2).into(imageView)
+                        textView2.text = "Click Start button to begin collecting."
 
-                        textView2.text = "Data collected!"
+//                        textView2.text = "Data collected!"
                         startBtn.isEnabled = true;
                         done = true
                     })
@@ -290,6 +319,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                     if (!SET_of_STAGES.isEmpty()) {
 //                    if (SET_of_STAGES.size<5) {
                         changeStage(SET_of_STAGES.random())
+
                         startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
                     }
                     else {
@@ -348,7 +378,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onSensorChanged(p0: SensorEvent?) {
 
-        if (con == 1) {
+//        if (con == 1) {
             if (p0 != null) {
                 new_list_X.add(p0.values[0])
                 new_list_Y.add(p0.values[1])
@@ -358,14 +388,16 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 new_b_list_Z.add(p0.values[5])
 
                 new_b_list_T.add(p0.timestamp)
-                println("mx : " + p0.values[0])
-                println("my : " + p0.values[1])
-                println("mz : " + p0.values[2])
+                con_list.add(con)
+                println("mx   : " + p0.values[0])
+                println("my   : " + p0.values[1])
+                println("mz   : " + p0.values[2])
                 println("mx_b : " + p0.values[3])
                 println("my_b : " + p0.values[4])
                 println("mz_b : " + p0.values[5])
+                println("con_ : " + con)
             }
-        }
+//        }
     }
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
         if (p0 === magnetometer) {
@@ -391,7 +423,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
     fun sendFileToFirebase (FileName:String){
         println("Početak slanja")
-        val storageRef: StorageReference = Firebase.storage.reference.child(Firebase_location+FileName)
+        val storageRef: StorageReference = Firebase.storage.reference.child(
+            (if(folderField.text.equals("")) Firebase_location else
+                         folderField.text.toString()+"/")+FileName)
         val stream = FileInputStream(File(phoneDir+"/"+FileName))
         val uploadTask = storageRef.putStream(stream)
         println("Završetak slanja")
