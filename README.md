@@ -5,14 +5,14 @@ On upon opening app user can read instructions how to put phone in appropriate s
 For now there are 2 stages (Stage 5 - All-Off and Stage 6 - All-On)
  - For stage 5 user needs to turn off Bluetooth, mobile data and Wi-Fi. And turn on Airplane mode.
  - For stage 6 user needs to turn on Bluetooth, mobile data and Wi-Fi. And turn off Airplane mode.
-*Example of screen
+Example of screen
 
 <img src="https://user-images.githubusercontent.com/93483397/211882008-70146d09-79bc-464c-aea1-a4118f122067.png" width="300" height="600">
 
 When ready user should click on button "Ready" to proceed!
 If conditions are not fulfilled app will warn user to check conditions again.
 
-<img src="https://user-images.githubusercontent.com/93483397/211883184-f4e0f211-42b8-4878-9c8c-25a59c1b108c.png" width="300" height="500">
+<img src="https://user-images.githubusercontent.com/93483397/211883184-f4e0f211-42b8-4878-9c8c-25a59c1b108c.png" width="300" height="425">
 
 In next activity user needs to enter file name (description of data) and folder name. If folder doesn’t exist on Firebase server, then new folder with given name will be created.
 
