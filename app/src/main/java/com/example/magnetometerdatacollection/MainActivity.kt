@@ -105,7 +105,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val sharedPref: SharedPreferences = getSharedPreferences("SharedVal", MODE_PRIVATE)
 //        SET_of_STAGES = SET_of_STAGES.minusElement(sharedPref.getInt("STAGE", -1))
         changeStage(SET_of_STAGES.random())
-//        println(SET_of_STAGES + "aaaaaaaaaaaaaaaaaaa")
 
         startActivity(Intent(this@MainActivity, PhaseActivity::class.java))
 
@@ -207,8 +206,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private fun writeCollectedData() {
 
         //creating data file for collection in new folder
-//        val contextWrapper = ContextWrapper(applicationContext)
-//        val path = contextWrapper.data
         val instanceOfList = mutableMapOf<String, Any>()
         val sharedPref = getSharedPreferences("SharedVal", MODE_PRIVATE)
         instanceOfList["stage"] = sharedPref.getInt("STAGE",-1)
@@ -217,7 +214,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 //        instanceOfList["Z_AWARE"] = list_Z
 //        instanceOfList["time_AWARE"] = list_timeStamp
 
-//        id = magnetometer.id.toString()
         id = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
         instanceOfList["DEVICE_ID"] = id
 
@@ -236,16 +232,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val gsonPretty = GsonBuilder().setPrettyPrinting().create()
         val jsonTutsListPretty: String = gsonPretty.toJson(listOf(instanceOfList))
         println(collDataDir.toPath().toString())
-//        println("Data"+UserID+".json")
-//        println(jsonTutsListPretty)
         File(collDataDir,"/Data_"+id+"_"+sharedPref.getInt("STAGE",-1)+"_"+UserID+".json").writeText(jsonTutsListPretty)
         //Firebase upload file------------------------------------------------------------
-//        val storage: FirebaseStorage = FirebaseStorage.instance
         phoneDir = collDataDir.path
         ListOfFiles.add("Data_"+id+"_"+sharedPref.getInt("STAGE",-1)+"_"+UserID+".json")
         println("printed"+sharedPref.getInt("STAGE",-1))
-//        println(File(collDataDir,"Data"+UserID+".json").exists())
-//        println(File(collDataDir,"Data"+UserID+".json").path)
     }
     fun init_lists_2_empty(){
         list_X = ArrayList<Any>()
