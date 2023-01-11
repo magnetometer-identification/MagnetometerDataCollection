@@ -18,10 +18,9 @@ In next activity user needs to enter file name (description of data) and folder 
 
 <img src="https://user-images.githubusercontent.com/93483397/211883752-701f7d53-70ad-45d6-ad46-6244cefa0110.png" width="300" height="600">
 
-After that data can be collected by clicking on button "Start collecting".
+After that data can be collected by clicking on button "Start collecting". Data will be collected in 60 seconds.
 Upon collecting data is done, app will position itself on first activity again. There next stage needs to be set up and process repeated as before.
 
 If last stage to be collected doesn't include internet connection app will inform user when to turn on the internet, so the files can be sent to server. 
-
-
+<img src="https://user-images.githubusercontent.com/93483397/211888269-4973f1ac-8752-4702-a5c6-b1609641122b.png" width="300" height="600">
 
