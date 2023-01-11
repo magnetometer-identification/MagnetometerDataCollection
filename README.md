@@ -22,5 +22,6 @@ After that data can be collected by clicking on button "Start collecting". Data 
 Upon collecting data is done, app will position itself on first activity again. There next stage needs to be set up and process repeated as before.
 
 If last stage to be collected doesn't include internet connection app will inform user when to turn on the internet, so the files can be sent to server. 
+
 <img src="https://user-images.githubusercontent.com/93483397/211888269-4973f1ac-8752-4702-a5c6-b1609641122b.png" width="300" height="600">
 
