@@ -7,9 +7,7 @@ For now there are 2 stages (Stage 5 - All-Off and Stage 6 - All-On)
  - For stage 6 user needs to turn on Bluetooth, mobile data and Wi-Fi. And turn off Airplane mode.
 Example of screen
 
-<img src="https://user-images.githubusercontent.com/93483397/211882008-70146d09-79bc-464c-aea1-a4118f122067.png" width="300" height="600">
-<img src="https://user-images.githubusercontent.com/93483397/211887426-4648328c-0176-44d0-b833-9c78e9d9059a.png" width="300" height="600">
-
+<img src="https://user-images.githubusercontent.com/93483397/211882008-70146d09-79bc-464c-aea1-a4118f122067.png" width="300" height="600"><img src="https://user-images.githubusercontent.com/93483397/211887426-4648328c-0176-44d0-b833-9c78e9d9059a.png" width="300" height="600">
 
 When ready user should click on button "Ready" to proceed!
 If conditions are not fulfilled app will warn user to check conditions again.
