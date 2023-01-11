@@ -25,4 +25,5 @@ If last stage to be collected doesn't include internet connection app will infor
 
 <img src="https://user-images.githubusercontent.com/93483397/211888269-4973f1ac-8752-4702-a5c6-b1609641122b.png" width="300" height="600"><img src="https://user-images.githubusercontent.com/93483397/211888863-3220989d-793b-497d-816b-13cf4ccbe333.png" width="300" height="600">
 
-<a id="raw-url" href="https://github.com/magnetometer-identification/MagnetometerDataCollection/releases/download/v3.0-beta/app-debug.apk">Download APK</a>
+# Last release of the app can be downloaded here
+- <a id="raw-url" href="https://github.com/magnetometer-identification/MagnetometerDataCollection/releases/download/v3.0-beta/app-debug.apk">Download APK</a>
